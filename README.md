@@ -84,4 +84,4 @@ Adapter replaces an interface the client cannot use.
   subsystems and the facades.
 
 ## UML
-See `docs/class-diagram.png`.
+See `docs/uml.png`.
