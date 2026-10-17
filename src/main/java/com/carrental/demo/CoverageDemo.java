@@ -1,5 +1,6 @@
-package com.carrental.coverage;
+package com.carrental.demo;
 
+import com.carrental.coverage.*;
 import com.carrental.infra.Database;
 
 import java.nio.file.Path;

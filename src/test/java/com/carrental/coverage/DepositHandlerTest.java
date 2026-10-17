@@ -62,4 +62,14 @@ class DepositHandlerTest {
     void unknownDepositIsRejected() {
         assertThrows(DepositNotFoundException.class, () -> handler.release("D-nope"));
     }
+
+    @Test
+    void capturedDepositKeepsTheFundsBlocked() {
+        Deposit d = handler.authorize("R-1", "cust-1", InsurancePlan.BASIC, 3);
+
+        handler.capture(d.getId());
+
+        assertEquals(DepositStatus.CAPTURED, handler.get(d.getId()).getStatus());
+        assertEquals(270, handler.availableFunds("cust-1"));   // списанные деньги не возвращаются в лимит
+    }
 }

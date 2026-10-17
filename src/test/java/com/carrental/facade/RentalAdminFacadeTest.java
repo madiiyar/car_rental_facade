@@ -7,6 +7,10 @@ import com.carrental.handover.HandoverStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import com.carrental.coverage.InsufficientFundsException;
+import com.carrental.fleet.Car;
+import com.carrental.handover.DamageFoundException;
+import com.carrental.coverage.IllegalDepositTransitionException;
 
 import java.nio.file.Path;
 
@@ -130,5 +134,53 @@ class RentalAdminFacadeTest {
     void listChainsReturnsEveryChainOnDisk() {
         world.rent("cust-1", "car-1");
         assertEquals(1, world.admin.listChains().size());
+    }
+
+    // ---------- управление сценариями ----------
+
+    @Test
+    void controlsCanLowerTheCardLimitToBreakStepB() {
+        world.admin.setCardLimit("cust-1", 50);
+
+        world.rentingFailsWith(InsufficientFundsException.class, "cust-1", "car-1");
+
+        assertEquals(RentalChainStatus.COMPENSATED, world.theOnlyChain().getStatus());
+    }
+
+    @Test
+    void controlsCanDamageACarToBreakStepC() {
+        world.admin.setDamageScore("car-1", 9);
+
+        world.rentingFailsWith(DamageFoundException.class, "cust-1", "car-1");
+
+        assertEquals(RentalChainStatus.COMPENSATED, world.theOnlyChain().getStatus());
+    }
+
+    @Test
+    void controlsCanTakeGpsOfflineToBreakStepC() {
+        world.admin.setGpsOnline("car-1", false);
+
+        world.rentingFailsWith(GpsUnavailableException.class, "cust-1", "car-1");
+
+        assertEquals(RentalChainStatus.COMPENSATED, world.theOnlyChain().getStatus());
+    }
+
+    @Test
+    void adminCanAddAndListCars() {
+        world.admin.addCar(new Car("car-9", "Kia Rio", "SEDAN", 40));
+        assertEquals(2, world.admin.listCars().size());   // car-1 из setUp и car-9
+    }
+
+    @Test
+    void compensationUndoesTheDepositBeforeTheReservation() {
+        RentalChain stuck = world.chainStuckAfterDeposit("cust-1", "car-1");
+        world.coverage.capture(stuck.getDepositId());   // CAPTURED: снять холд нельзя, откат B упадёт
+
+        assertThrows(IllegalDepositTransitionException.class, () -> world.admin.compensate(stuck.getId()));
+
+        // B упал первым, значит A не тронута, а цепочка осталась незавершённой
+        RentalChain after = world.chainOnDisk(stuck.getId());
+        assertEquals(RentalChainStatus.PENDING_C, after.getStatus());
+        assertEquals(ReservationStatus.HELD, world.reservationOf(after));
     }
 }

@@ -54,6 +54,14 @@ public class FleetAvailabilityTracker {
         return repository.findAll();
     }
 
+    public void addCar(Car car) {
+        repository.saveCar(car);
+    }
+
+    public List<Car> cars() {
+        return repository.findAllCars();
+    }
+
     private Reservation load(String reservationId) {
         return repository.findById(reservationId)
                 .orElseThrow(() -> new ReservationNotFoundException(reservationId));

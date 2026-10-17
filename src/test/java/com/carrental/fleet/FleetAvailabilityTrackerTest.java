@@ -74,4 +74,16 @@ class FleetAvailabilityTrackerTest {
                 () -> tracker.reserve("car-1", "cust-1", OCT_23, OCT_20));
         assertTrue(tracker.all().isEmpty());
     }
+
+    @Test
+    void addedCarsAreListed() {
+        tracker.addCar(new Car("car-2", "Hyundai Tucson", "SUV", 80));
+        assertEquals(2, tracker.cars().size());   // car-1 из setUp и car-2
+    }
+
+    @Test
+    void confirmingOrReleasingAnUnknownReservationIsRejected() {
+        assertThrows(ReservationNotFoundException.class, () -> tracker.confirm("R-nope"));
+        assertThrows(ReservationNotFoundException.class, () -> tracker.release("R-nope"));
+    }
 }

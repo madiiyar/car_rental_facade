@@ -7,6 +7,7 @@ import com.carrental.fleet.ReservationStatus;
 import com.carrental.handover.Handover;
 import com.carrental.handover.HandoverService;
 import com.carrental.handover.HandoverStatus;
+import com.carrental.fleet.Car;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,4 +69,32 @@ public class RentalAdminFacade {
         }
         return recovered;
     }
+
+    // ---------- управление сценариями для демо ----------
+
+    public List<Car> listCars() {
+        return fleet.cars();
+    }
+
+    public void addCar(Car car) {
+        fleet.addCar(car);
+    }
+
+    /** Маленький лимит -> шаг B упадёт. */
+    public void setCardLimit(String customerId, long limit) {
+        coverage.setCardLimit(customerId, limit);
+    }
+
+    /** Оценка выше 3 -> шаг C упадёт. */
+    public void setDamageScore(String carId, int score) {
+        handover.setDamageScore(carId, score);
+    }
+
+    /** Оффлайн -> шаг C упадёт после записи выдачи. */
+    public void setGpsOnline(String carId, boolean online) {
+        handover.setGpsOnline(carId, online);
+    }
+
+
+
 }

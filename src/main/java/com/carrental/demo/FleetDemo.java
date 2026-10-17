@@ -1,5 +1,6 @@
-package com.carrental.fleet;
+package com.carrental.demo;
 
+import com.carrental.fleet.*;
 import com.carrental.infra.Database;
 
 import java.nio.file.Path;
