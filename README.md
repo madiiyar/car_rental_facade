@@ -11,7 +11,7 @@ Requires JDK 17 or newer (tested on JDK 21) and Maven 3.9+.
 - Coverage report: `target/site/jacoco/index.html`
 - Standalone subsystem demos: `FleetDemo`, `CoverageDemo`, `HandoverDemo` in `com.carrental.demo` (run their `main`).
 - Persisted state (SQLite): `data/fleet.db`, `data/coverage.db`, `data/handover.db`, `data/chains.db`
-- 
+
 ## Architecture
 | Subsystem | Package | Logic | Entity (status) | Gateway |
 |---|---|---|---|---|

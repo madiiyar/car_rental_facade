@@ -28,11 +28,12 @@ public class ConsoleMenu {
     /** Возвращает true, если попросили сброс данных (Main удалит файлы и откроет приложение заново). */
     public boolean run() {
         while (true) {
+            printMenu();
+            System.out.print("Choose: ");
             if (!in.hasNextLine()) {
                 return false;   // ввод закрыт
             }
-            printMenu();
-            String choice = prompt("Choose");
+            String choice = in.nextLine().trim();
             try {
                 switch (choice) {
                     case "1" -> listCars();
